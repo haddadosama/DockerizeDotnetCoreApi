@@ -83,8 +83,8 @@ Now your image should be available in your AWS account in ECR... Congratulations
 2. Select Create stack
 3. Select Upload a template file
 4. Choose the file from your drive "01-CreateVPC.yml"
-5. Fill the stack name, EnvironmentName, and projectName(to add a tag project to all recourses for easier control)
-6. Add project tag with the same value you used in the previews step
+5. Fill the Stack Name, EnvironmentName, and ProjectName (to add a tag project to all resources for easier control)
+6. Add project tag with the same value you used in the previous step
 7. Create the stack
 
 ## Step 3: Create ECS within the created VPC
