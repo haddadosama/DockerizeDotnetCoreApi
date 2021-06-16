@@ -1,16 +1,16 @@
 # DockerizeYourNetCoreApp
 
 ## Description
-This repo will take you step by step on how to dockerize youe .net application into AWS using aws cli and docke. This will help scripting your deployment and give you more control on your requirments
+This repo will take you step by step on how to dockerize your .net application into AWS using AWS CLI and docker. This will help to script your deployment and give you more control over your requirements
 
 ### Clone the repository on your local machine:
 ```console
 git clone https://github.com/haddadosama/DockerizeYouNetCoreApp.git
 ```
 
-## Step 1: Build you docker image and push it to ECR (Elastic Container Registry)
+## Step 1: Build your Docker image and push it to ECR (Elastic Container Registry)
 
-1. first you have to authenticate Docker to an Amazon ECR (please dont foget to select your region):
+1. First you have to authenticate Docker to an Amazon ECR (please don't forget to select your region):
 
 ```console
 Invoke-Expression -Command (Get-ECRLoginCommand -Region {{region}}).Command
@@ -54,7 +54,7 @@ cd {{git repository location}}
 docker build -t dummynetcoreapi/dev .\DummyNetCoreAPI
 ```
 
-4. Now you should tag your image with following format
+4. Now you should tag your image in the following format
 
 docker tag {{Image ID}} {{AWS account ID}}.dkr.ecr.{{region}}.amazonaws.com/{{Repository Name in ECR}}
 ### Note:
@@ -77,11 +77,12 @@ Now your image should be available in your AWS account in ECR... Congratulations
 ## Step 2: Build VPC using the template from the repository on the following path:
 {{git repository location}}\CloudFormationTemplates\01-CreateVPC.yml
 
-1. Go to cloudformation in AWS console
+1. Go to cloud formation in AWS console
 2. Select Create stack
 3. Select Upload a template file
-4. Choose file from your drive "01-CreateVPC.yml"
-5. Fill the stack name, EnvironmentName and projectName(to add a tag project to all recourses for easier control)
-6. add project tag with same value you used in the previews step
-7. create stack
+4. Choose the file from your drive "01-CreateVPC.yml"
+5. Fill the stack name, EnvironmentName, and projectName(to add a tag project to all recourses for easier control)
+6. Add project tag with the same value you used in the previews step
+7. Create the stack
 
+## Step 3: Create ECS within the created VPC
