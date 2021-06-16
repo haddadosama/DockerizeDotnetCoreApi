@@ -55,8 +55,10 @@ docker build -t dummynetcoreapi/dev .\DummyNetCoreAPI
 ```
 
 4. Now you should tag your image in the following format
-
+```
 docker tag {{Image ID}} {{AWS account ID}}.dkr.ecr.{{region}}.amazonaws.com/{{Repository Name in ECR}}
+```
+
 ### Note:
 you can get Image ID by running the following command
 
