@@ -65,19 +65,20 @@ you can get Image ID by running the following command
 *Docker Images*
 
 ```console
-docker tag 421ef83c2491 803942325742.dkr.ecr.us-east-1.amazonaws.com/dummynetcoreapi/dev
+docker tag 421ef83c2491 084804482181.dkr.ecr.us-east-1.amazonaws.com/dummynetcoreapi/dev
 ```
 
 5. Push the image to ECR by running the push command
 
 ```console
-docker push 803942325742.dkr.ecr.us-east-1.amazonaws.com/dummynetcoreapi/dev
+docker push  084804482181.dkr.ecr.us-east-1.amazonaws.com/dummynetcoreapi/dev
 ```
 
 Now your image should be available in your AWS account in ECR... Congratulations !! :)
 
-## Step 2: Build VPC using the template from the repository on the following path:
-{{git repository location}}\CloudFormationTemplates\01-CreateVPC.yml
+## Step 2: Build VPC using the template:
+
+File Path: *{{git repository location}}\CloudFormationTemplates\01-CreateVPC.yml*
 
 1. Go to cloud formation in AWS console
 2. Select Create stack
@@ -88,3 +89,25 @@ Now your image should be available in your AWS account in ECR... Congratulations
 7. Create the stack
 
 ## Step 3: Create ECS within the created VPC
+
+File Path: *{{git repository location}}\CloudFormationTemplates\02-CreateECS.yml*
+
+1. Go to cloud formation in AWS console
+2. Select Create stack
+3. Select Upload a template file
+4. Choose the file from your drive "02-CreateECS.yml"
+5. Fill the Stack Name
+6. All other feilds can use the default values, but the following few feild are important:
+    a. Private Subnets A B C 
+    b. Public Subnets A B C
+    c. VPC
+    d. Image: this should be the URL from Step 1 ex:  084804482181.dkr.ecr.us-east-1.amazonaws.com/dummynetcoreapi/dev
+6. Add project tag with the same value you used in the previous step
+7. Create the stack
+
+
+Finally, once you get CREATE_COMPLETE Status, go to Outputs you will find your sevice URL.
+
+Enjoy!! :)
+
+

@@ -27,6 +27,11 @@ Parameters:
     Type: String
     Default: 10.192.11.0/24
 
+  PublicSubnet3CIDR:
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the third Availability Zone
+    Type: String
+    Default: 10.192.12.0/24
+
   PrivateSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
     Type: String
@@ -36,6 +41,11 @@ Parameters:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
     Type: String
     Default: 10.192.21.0/24
+
+  PrivateSubnet3CIDR:
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the Third Availability Zone
+    Type: String
+    Default: 10.192.22.0/24
 
 Resources:
   VPC:
@@ -91,6 +101,19 @@ Resources:
         - Key: Project
           Value: !Ref ProjectName
 
+  PublicSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 2, !GetAZs  '' ]
+      CidrBlock: !Ref PublicSubnet3CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ3)
+        - Key: Project
+          Value: !Ref ProjectName
+
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -117,6 +140,19 @@ Resources:
         - Key: Project
           Value: !Ref ProjectName
 
+  PrivateSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 2, !GetAZs  '' ]
+      CidrBlock: !Ref PrivateSubnet3CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Subnet (AZ3)
+        - Key: Project
+          Value: !Ref ProjectName
+
   NatGateway1EIP:
     Type: AWS::EC2::EIP
     DependsOn: InternetGatewayAttachment
@@ -124,6 +160,12 @@ Resources:
       Domain: vpc
 
   NatGateway2EIP:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+
+  NatGateway3EIP:
     Type: AWS::EC2::EIP
     DependsOn: InternetGatewayAttachment
     Properties:
@@ -140,6 +182,12 @@ Resources:
     Properties:
       AllocationId: !GetAtt NatGateway2EIP.AllocationId
       SubnetId: !Ref PublicSubnet2
+  
+  NatGateway3:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGateway3EIP.AllocationId
+      SubnetId: !Ref PublicSubnet3
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -170,6 +218,12 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
+
+  PublicSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet3
 
 
   PrivateRouteTable1:
@@ -218,6 +272,29 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable2
       SubnetId: !Ref PrivateSubnet2
 
+  PrivateRouteTable3:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Routes (AZ3)
+        - Key: Project
+          Value: !Ref ProjectName
+
+  DefaultPrivateRoute3:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable3
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway3
+
+  PrivateSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable3
+      SubnetId: !Ref PrivateSubnet3
+
   SecurityGroup80:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -243,11 +320,11 @@ Outputs:
 
   PublicSubnets:
     Description: A list of the public subnets
-    Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
+    Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 , !Ref PublicSubnet3 ]]
 
   PrivateSubnets:
     Description: A list of the private subnets
-    Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 ]]
+    Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 , !Ref PrivateSubnet3 ]]
 
   PublicSubnet1:
     Description: A reference to the public subnet in the 1st Availability Zone
@@ -256,6 +333,10 @@ Outputs:
   PublicSubnet2:
     Description: A reference to the public subnet in the 2nd Availability Zone
     Value: !Ref PublicSubnet2
+  
+  PublicSubnet3:
+    Description: A reference to the public subnet in the 3rd Availability Zone
+    Value: !Ref PublicSubnet3
 
   PrivateSubnet1:
     Description: A reference to the private subnet in the 1st Availability Zone
@@ -264,6 +345,10 @@ Outputs:
   PrivateSubnet2:
     Description: A reference to the private subnet in the 2nd Availability Zone
     Value: !Ref PrivateSubnet2
+
+  PrivateSubnet3:
+    Description: A reference to the private subnet in the 3rd Availability Zone
+    Value: !Ref PrivateSubnet3
 
   SecurityGroup80:
     Description: Security group with port 80 open for inbound
