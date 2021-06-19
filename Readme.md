@@ -7,7 +7,10 @@ This repo will take you step by step on how to dockerize your .net application i
 ```console
 git clone https://github.com/haddadosama/DockerizeYouNetCoreApp.git
 ```
-
+### Prerequisites
+- Docker
+- AWS CLI
+- Credintials Access Key and Secrets of AWS account are already available in credintials file in .AWS folder
 ## Step 1: Build your Docker image and push it to ECR (Elastic Container Registry)
 
 1. First you have to authenticate Docker to an Amazon ECR (please don't forget to select your region):
