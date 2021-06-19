@@ -1,4 +1,4 @@
-# DockerizeYourNetCoreApp
+# DockerizeDotnetCoreApi
 
 ## Description
 This repo will take you step by step on how to dockerize your .net application into AWS using AWS CLI and docker. This will help to script your deployment and give you more control over your requirements
